@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appIDs": ["2AAKLBHJN8.com.trinkwald.app"],
+        "paths": ["/friend", "/friend/*", "/friend?*"]
+      }
+    ]
+  }
+}

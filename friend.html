@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrinkWald — Freundes-Einladung</title>
+    <meta property="og:title" content="TrinkWald — Freundes-Einladung">
+    <meta property="og:description" content="Jemand will mit dir zusammen Wasser trinken! Lade TrinkWald und gib den Code ein.">
+    <meta property="og:image" content="https://trinkwald.app/og-image.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Rounded', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px 32px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+        }
+        .emoji-logo { font-size: 48px; margin-bottom: 12px; }
+        h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1b5e20;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            font-size: 15px;
+            color: #388e3c;
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+        .code-box {
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        .code-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        .code {
+            font-size: 36px;
+            font-weight: 800;
+            font-family: 'SF Mono', 'Menlo', monospace;
+            color: white;
+            letter-spacing: 6px;
+        }
+        .copy-hint {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 8px;
+            cursor: pointer;
+        }
+        .steps {
+            text-align: left;
+            margin-bottom: 24px;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            font-size: 15px;
+            color: #2e7d32;
+        }
+        .step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #e8f5e9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            color: #2e7d32;
+            flex-shrink: 0;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px 24px;
+            border-radius: 16px;
+            font-size: 17px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.15s;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary {
+            background: linear-gradient(135deg, #2e7d32, #388e3c);
+            color: white;
+        }
+        .copied-toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1b5e20;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        .copied-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="emoji-logo">👋🌿</div>
+        <h1>Freundes-Einladung</h1>
+        <p class="subtitle">Jemand will mit dir zusammen Wasser trinken und den Regenwald wachsen lassen!</p>
+
+        <div class="code-box" onclick="copyCode()">
+            <div class="code-label">Dein Freundes-Code</div>
+            <div class="code" id="friendCode">------</div>
+            <div class="copy-hint">Tippen zum Kopieren</div>
+        </div>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">1</div>
+                <span>Lade TrinkWald (siehe Button unten)</span>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <span>Öffne den <strong>Freunde</strong>-Tab</span>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <span>Gib den Code oben ein</span>
+            </div>
+        </div>
+
+        <a href="https://testflight.apple.com/join/vkCrTPqH" class="btn btn-primary">
+            TrinkWald laden (TestFlight)
+        </a>
+    </div>
+
+    <div class="copied-toast" id="toast">Code kopiert!</div>
+
+    <script>
+        // Code aus URL-Parameter lesen
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        if (code) {
+            document.getElementById('friendCode').textContent = code.toUpperCase();
+        }
+
+        function copyCode() {
+            const code = document.getElementById('friendCode').textContent;
+            if (code && code !== '------') {
+                navigator.clipboard.writeText(code).then(() => {
+                    const toast = document.getElementById('toast');
+                    toast.classList.add('show');
+                    setTimeout(() => toast.classList.remove('show'), 2000);
+                });
+            }
+        }
+
+        // Versuche die App zu öffnen (falls installiert)
+        if (code) {
+            window.location.href = 'trinkwald://friend?code=' + code;
+        }
+    </script>
+</body>
+</html>
